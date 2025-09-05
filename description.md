@@ -135,12 +135,37 @@ Party A (buyer/client) creates their agreement through DocPact's intuitive contr
 - **Multi-language Support:** Contracts can be displayed in multiple languages while maintaining technical accuracy
 - **Legal Compliance Indicators:** Real-time validation against regional legal requirements
 
+**Natural Language Contract Signing Process:**
+- **Interactive Contract Review:** Both parties can review the contract in plain English with highlighted key terms, obligations, and payment conditions
+- **Digital Signature Integration:** Cryptographic signing using wallet-based digital signatures (MetaMask, WalletConnect) that are legally binding and verifiable on-chain
+- **Signature Verification:** Each party's digital signature is cryptographically verified and recorded on the blockchain with timestamp and wallet address
+- **Multi-Party Signing:** Support for sequential or parallel signing workflows for contracts involving multiple stakeholders
+- **Signature Status Tracking:** Real-time visibility into signing progress with notifications when all required signatures are collected
+
 > **Note:** No user account signup is forced—
   - Authentication and transaction signing is handled with **MetaMask**, **WalletConnect**, or similar EVM wallet providers.
   - Web app UI (Next.js, Tailwind CSS) delivers seamless onboarding and clear deal management.
   - **Contract Preview Mode:** Parties can review and understand all terms before signing or depositing funds.
+  - **Signature Audit Trail:** Complete record of who signed what, when, and with which wallet address for legal compliance.
 
-### 5.2 Programmable Payment/Settlement
+### 5.2 Digital Signature & Contract Execution
+
+Once the contract terms are agreed upon in natural language, both parties proceed through a secure digital signature process:
+
+**Technical Implementation:**
+- **EIP-712 Structured Data Signing:** Uses Ethereum's typed structured data hashing and signing standard for human-readable signature requests
+- **Multi-Signature Validation:** Smart contract validates that all required parties have provided valid cryptographic signatures
+- **Signature Aggregation:** Combines multiple signatures into a single on-chain transaction to minimize gas costs
+- **Legal Binding:** Digital signatures carry the same legal weight as handwritten signatures under eIDAS (EU) and ESIGN Act (US) regulations
+
+**Signing Workflow:**
+1. **Contract Finalization:** Both parties review the final contract terms in plain English
+2. **Signature Request:** System generates structured signature requests for each party's wallet
+3. **Cryptographic Signing:** Each party signs with their private key through their wallet interface
+4. **On-Chain Recording:** Signatures are verified and recorded on the blockchain with immutable timestamps
+5. **Contract Activation:** Once all signatures are collected, the smart contract becomes active and funds are escrowed
+
+### 5.4 Programmable Payment/Settlement
 
 - User deposits tokens (primarily **USDFC**, with FEVM support) into the **FilecoinPay** escrow smart contract.
 - The amount can cover:
@@ -150,7 +175,7 @@ Party A (buyer/client) creates their agreement through DocPact's intuitive contr
   - Gas & storage buffer
 - DocPact (via SynapseSDK's PaymentsService/module) pre-checks balances, handles approvals, and builds a clean onchain summary for all parties.
 
-### 5.3 Submission and Evidence Storage (B)
+### 5.5 Submission and Evidence Storage (B)
 
 - Seller/contributor authenticates and uploads deliverables using the DocPact Next.js frontend.
 - **All uploads are** AES/ChaCha-encrypted *client-side*; encryption key is generated *per deal*.
@@ -160,7 +185,7 @@ Party A (buyer/client) creates their agreement through DocPact's intuitive contr
   - Each CID (content identifier) and metadata is logged onchain in contract state for agent and audit access.
   - For **large assets** (video, zipped repos), chunked upload + stream processing is supported.
 
-### 5.4 Verifiable AI/Agent Review
+### 5.6 Verifiable AI/Agent Review
 
 - Agents are orchestrated through **LangGraph** (multi-agent, multi-stage orchestration framework for conversational, logic, or workflow agents).
 - **AI, script, or human-based agent** (can include multiple nodes in LangGraph) receives a notification, proves identity, and fetches CIDs directly from Filecoin storage via SynapseSDK.
@@ -180,20 +205,20 @@ Party A (buyer/client) creates their agreement through DocPact's intuitive contr
 > - **ZK-TEE (Zero-Knowledge Trusted Execution Environment)** refers to computational processing instances where sensitive code and data are processed in isolated environments, ensuring that information is not utilized by AI agents or services for model training, addressing privacy concerns in computational processing. <mcreference link="https://www.reddit.com/r/CryptoCurrency/comments/11hmu10/zero_knowledge_proofs_vs_trusted_execution/" index="1">1</mcreference> <mcreference link="https://www.binance.com/en/square/post/2024-11-01-differences-between-zk-and-trusted-execution-environment-in-blockchain-15652592984362" index="4">4</mcreference>
 > - **DocPact can compose ZK and TEE:** Host ZK proof circuits *inside* TEEs, so that even proof generation is never seen by the agent's host or network, for "defense-in-depth".
 
-### 5.5 Payment, Disclosure, and Handover
+### 5.7 Payment, Disclosure, and Handover
 
 - On agent or ZK/TEE-verified pass, the DocPact smart contract releases USDFC (via FilecoinPay or Synapse PaymentsService) to B, per contract stipulations (full, split, or staged as defined in contract/milestone logic).
 - If present, the deal-specific decryption key is released to client (A); all deliverables become accessible and verifiable.
 - Failure/dispute/agent or attestation failure results in protocol-triggered refund, return-to-draft, burn, or optional mediation. *All steps are logged on Filecoin for full, cryptographic audit and replay.*
 
-### 5.6 Secure, Auditable Storage and Privacy
+### 5.8 Secure, Auditable Storage and Privacy
 
 - **Every file, log, and contract event is pushed to Filecoin via Synapse SDK**, using decentralized proofs, audit trails, and content-addressed storage.
 - **Filecoin's ZK-SNARK implementation** is specifically designed for storage verification (Proof of Replication and Proof of Spacetime), generating 6-7 million proofs daily to verify storage integrity. <mcreference link="https://filecoin.io/blog/posts/zero-knowledge-and-the-filecoin-network/" index="1">1</mcreference> ZK-TEE computational processing integrates with Filecoin's storage layer through compatible tools and frameworks.
 - Blockchain event logs + offchain Merkle proofs anchor every workflow; *no lost evidence or "he said, she said"—all deal artifacts verifiable anytime*.
 - **Client-driven encryption** always, with one-time or agent/TEE-scoped decryption—**no agent or storage provider ever sees confidential data unless contracted and attested for that session**.
 
-### 5.7 Detailed Integration & Full Stack — Packages, SDKs, and Agent Architecture
+### 5.9 Detailed Integration & Full Stack — Packages, SDKs, and Agent Architecture
 
 **Front End & Back End:**  
 - `next`, `react`, `typescript`, and `tailwindcss`: Unified SSR/CSR dApp for onboarding, dashboards, API routes (private/public endpoints), agent triggers, admin interfaces.
@@ -223,13 +248,16 @@ Party A (buyer/client) creates their agreement through DocPact's intuitive contr
 
 ***
 
-## 5. System Diagram
+## 6. System Diagram
 
 ```mermaid 
 flowchart TD
     A["Party A<br>Client / Commissioner"] --> S1["Step 1: Create Escrow Deal<br>Pays USDFC plus Commission Upfront"] & S2["Step 2: Set Terms and Agent Logic"]
     S1 --> Escrow["Escrow Smart Contract<br>DocPact FEVM / FilecoinPay"]
     S2 --> Agent["AI Agent<br>LangGraph + TEE AI ZK"]
+    S2 --> S2a["Step 2a: Natural Language Contract Review<br>Both Parties Review Terms"]
+    S2a --> S2b["Step 2b: Digital Signature Process<br>Cryptographic Signing by Both Parties"]
+    S2b --> Escrow
     Escrow --> S3["Step 3: Holds USDFC and Fees"] & S4["Step 4: Sends Link to B"] & S13["Step 13: Party A Checks or Approves<br>manual or automatic"] & S14["Step 14: On Success<br>Release Payment to B, Archive File to Cold Storage"] & S15["Step 15: Move File to Cold Storage"] & S17["Step 17: Collect Commission and Gas Fees"] & S18["Step 18: On Fail or Dispute<br>Refund Party A minus Fees"] & S19["Step 19: All Steps and Proofs Auditable<br>via Filecoin Onchain Logs"]
     S3 --> Bank["USDFC Vault<br>Wallet Payments"]
     S4 --> B["Party B<br>Developer / Seller"]
@@ -272,7 +300,7 @@ flowchart TD
 
 ***
 
-## 6. Why Filecoin Onchain Cloud?
+## 7. Why Filecoin Onchain Cloud?
 
 - **Scalable, programmable, content-addressed storage**—pay-by-use and always permanent.
 - **Flexible USDFC-based programmable payments/escrow** with programmable splits and agent triggers.
@@ -281,7 +309,7 @@ flowchart TD
 
 ***
 
-## 7. Market Impact & Modularity
+## 8. Market Impact & Modularity
 
 **DocPact’s design meets:**
 - Freelancers, teams, and DAOs seeking freedom from 20%+ platform fees, rigid templates, or payment risk.
@@ -295,7 +323,7 @@ flowchart TD
 
 ***
 
-## 8. Future Vision & Growth Potential
+## 9. Future Vision & Growth Potential
 
 DocPact is not just building for today's remote creative economy—it's setting the new gold standard for how digital contracts, verification, and distributed cooperation should work in the 21st century and beyond.
 
@@ -338,7 +366,7 @@ DocPact is not just building for today's remote creative economy—it's setting 
 
 ***
 
-## 9. Extensibility & Current Roadmap
+## 10. Extensibility & Current Roadmap
 
 - **Agent/plugin marketplace:** Devs and users add new agents, ZK/TEE flows, social/vertical templates, composable for new industries
 - **Template library:** Flexibly supports new use cases, team splits, legal flows, patent sales, digital credentials, voting, and more
@@ -347,7 +375,7 @@ DocPact is not just building for today's remote creative economy—it's setting 
 
 ***
 
-## 9. Invitation & Next Steps
+## 11. Invitation & Next Steps
 
 DocPact is built as a transparent, community-owned trust protocol:
 - **Developers:** Contribute agent modules, plugins, workflow templates, or integration layers.
