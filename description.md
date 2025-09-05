@@ -177,7 +177,8 @@ Party A (buyer/client) creates their agreement through DocPact's intuitive contr
   - ZK proofs are verified either by agent plugins, TEE, or, in the future, onchain as ZK rollups mature.
 
 > - **Trusted Execution Environments (TEEs or enclaves)—such as Intel SGX, AWS Nitro, Oasis, Consensys Conclave**—isolate code and data away from host OS/app, providing cryptographic attestation that secret data is only processed inside the tested enclave, and output is only released if computation is unmodified.
-> - **DocPact can compose ZK and TEE:** Host ZK proof circuits *inside* TEEs, so that even proof generation is never seen by the agent’s host or network, for “defense-in-depth”.
+> - **ZK-TEE (Zero-Knowledge Trusted Execution Environment)** refers to computational processing instances where sensitive code and data are processed in isolated environments, ensuring that information is not utilized by AI agents or services for model training, addressing privacy concerns in computational processing. <mcreference link="https://www.reddit.com/r/CryptoCurrency/comments/11hmu10/zero_knowledge_proofs_vs_trusted_execution/" index="1">1</mcreference> <mcreference link="https://www.binance.com/en/square/post/2024-11-01-differences-between-zk-and-trusted-execution-environment-in-blockchain-15652592984362" index="4">4</mcreference>
+> - **DocPact can compose ZK and TEE:** Host ZK proof circuits *inside* TEEs, so that even proof generation is never seen by the agent's host or network, for "defense-in-depth".
 
 ### 5.5 Payment, Disclosure, and Handover
 
@@ -188,7 +189,8 @@ Party A (buyer/client) creates their agreement through DocPact's intuitive contr
 ### 5.6 Secure, Auditable Storage and Privacy
 
 - **Every file, log, and contract event is pushed to Filecoin via Synapse SDK**, using decentralized proofs, audit trails, and content-addressed storage.
-- Blockchain event logs + offchain Merkle proofs anchor every workflow; *no lost evidence or “he said, she said”—all deal artifacts verifiable anytime*.
+- **Filecoin's ZK-SNARK implementation** is specifically designed for storage verification (Proof of Replication and Proof of Spacetime), generating 6-7 million proofs daily to verify storage integrity. <mcreference link="https://filecoin.io/blog/posts/zero-knowledge-and-the-filecoin-network/" index="1">1</mcreference> ZK-TEE computational processing integrates with Filecoin's storage layer through compatible tools and frameworks.
+- Blockchain event logs + offchain Merkle proofs anchor every workflow; *no lost evidence or "he said, she said"—all deal artifacts verifiable anytime*.
 - **Client-driven encryption** always, with one-time or agent/TEE-scoped decryption—**no agent or storage provider ever sees confidential data unless contracted and attested for that session**.
 
 ### 5.7 Detailed Integration & Full Stack — Packages, SDKs, and Agent Architecture
@@ -275,7 +277,7 @@ flowchart TD
 - **Scalable, programmable, content-addressed storage**—pay-by-use and always permanent.
 - **Flexible USDFC-based programmable payments/escrow** with programmable splits and agent triggers.
 - **Decentralized proof and retrieval**—all deal evidence and events are cryptographically proven, never lost, and not tropical to platform infra.
-- **Native support for ZK/TEE computation**—run verifications confidentially, trustlessly, and extensibly.
+- **Integration with ZK/TEE computation tools**—enables verifications to run confidentially through compatible ZK proof systems and trusted execution environments, while Filecoin provides the underlying storage and proof infrastructure.
 
 ***
 
