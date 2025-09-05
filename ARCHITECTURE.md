@@ -79,17 +79,6 @@ const { input, deliverable, milestones, verification, privacy, compliance } = us
 2. Calculate platform/agent fees (shown on UI).
 3. User(s) sign and initiate payment to escrow (USDFC or other FEVM-supported tokens).
 
-##### **Escrow Deposit Confirmation Table**
-
-| Item            | Amount           | Notes                    |
-|-----------------|-----------------|--------------------------|
-| Milestone #1    | $1,000           | Due after phase 1 pass   |
-| Milestone #2    | $1,000           | ...                      |
-| Milestone #3    | $1,000           | ...                      |
-| Agent Fees      | $45              | Verification phase       |
-| Storage Buffer  | $2               | Warm + cold, estimate    |
-| Total           | $3,047           |                          |
-
 ***
 
 ## 4. 🔐 **Asset Submission and Cryptographic Storage**
@@ -236,4 +225,59 @@ flowchart TB
 
 ***
 
-This full architecture.md is ready for both teams and developers—**richly annotating every technical, UX, privacy, and contract detail.**  
+This full architecture.md is ready for both teams and developers—**richly annotating every technical, UX, privacy, and contract detail.**
+
+***
+
+## 11. **Detailed System Flow Diagram**
+
+The following diagram provides a comprehensive, step-by-step view of the DocPact system architecture, showing the complete flow from contract creation through payment settlement:
+
+```mermaid 
+flowchart TD
+    A["Party A<br>Client / Commissioner"] --> S1["Step 1: Create Escrow Deal<br>Pays USDFC plus Commission Upfront"] & S2["Step 2: Set Terms and Agent Logic"]
+    S1 --> Escrow["Escrow Smart Contract<br>DocPact FEVM / FilecoinPay"]
+    S2 --> Agent["AI Agent<br>LangGraph + TEE AI ZK"]
+    S2 --> S2a["Step 2a: Natural Language Contract Review<br>Both Parties Review Terms"]
+    S2a --> S2b["Step 2b: Digital Signature Process<br>Cryptographic Signing by Both Parties"]
+    S2b --> Escrow
+    Escrow --> S3["Step 3: Holds USDFC and Fees"] & S4["Step 4: Sends Link to B"] & S13["Step 13: Party A Checks or Approves<br>manual or automatic"] & S14["Step 14: On Success<br>Release Payment to B, Archive File to Cold Storage"] & S15["Step 15: Move File to Cold Storage"] & S17["Step 17: Collect Commission and Gas Fees"] & S18["Step 18: On Fail or Dispute<br>Refund Party A minus Fees"] & S19["Step 19: All Steps and Proofs Auditable<br>via Filecoin Onchain Logs"]
+    S3 --> Bank["USDFC Vault<br>Wallet Payments"]
+    S4 --> B["Party B<br>Developer / Seller"]
+    B --> S5["Step 5: Accesses Upload Portal"]
+    S5 --> Portal["Next.js Upload Portal"]
+    Portal --> S6["Step 6: Encrypts ZK Contract Locally"]
+    S6 --> Encrypt["Client-side Encryption<br>AES ChaCha"]
+    Encrypt --> S7["Step 7: Upload Encrypted File"]
+    S7 --> Warm["Filecoin Warm Storage<br>SynapseSDK"]
+    Warm --> S8["Step 8: Store CID and Metadata to Escrow Contract"] & S9["Step 9: Notify Agent for Review"]
+    S8 --> Escrow
+    S9 --> Agent
+    Agent --> S10["Step 10: Download and Decrypt File<br>in TEE Enclave if needed"] & S11["Step 11: Verify ZK Contract<br>Run Tests and Proofs"]
+    S10 --> Warm
+    S11 --> S12["Step 12: Submit Pass or Fail with Proof"]
+    S12 --> Escrow
+    S13 --> A
+    S14 --> Bank
+    S15 --> Cold["Filecoin Cold Storage<br>SynapseSDK"]
+    Cold --> S16["Step 16: B Accesses File After Payment"]
+    S16 --> B
+    S17 --> FeePool["Commission and Fees"]
+    S18 --> Bank
+    S19 --> A
+
+     Escrow:::escrow
+     Agent:::agent
+     Warm:::storage
+     Cold:::storage
+    classDef storage fill:#fff6db,stroke:#eab308
+```
+
+This detailed flow diagram illustrates:
+- **Contract Creation & Signing:** Natural language contract review and digital signature processes (Steps 1-2b)
+- **Escrow Management:** USDFC payment handling and smart contract orchestration (Steps 3-4)
+- **Secure File Handling:** Client-side encryption, warm storage upload, and metadata management (Steps 5-8)
+- **Agent Verification:** TEE-based decryption, ZK contract verification, and proof submission (Steps 9-12)
+- **Settlement & Archival:** Payment release, cold storage archival, and audit trail creation (Steps 13-19)
+
+Each step is cryptographically verifiable and permanently logged on Filecoin for complete transparency and auditability.

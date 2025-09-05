@@ -1,6 +1,8 @@
 # DocPact: A Decentralized, Agent-Driven Trust Layer for Secure Digital Exchange
 
 > **Note:** For detailed project information, technical walkthrough, and use cases, see [description.md](./description.md)
+> 
+> **Technical Architecture:** For comprehensive technical architecture, implementation details, and system design, see [ARCHITECTURE.md](./ARCHITECTURE.md)
 
 DocPact is a Filecoin-powered, AI-mediated, and privacy-preserving "digital third party" for secure, verifiable, and flexible digital asset exchange. This repository contains the Next.js frontend application that enables creators, teams, businesses, and organizations to exchange digital content without requiring trust in counterparties or platform operators.
 
