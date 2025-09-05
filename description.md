@@ -1,5 +1,9 @@
 ***
 
+> **📋 Technical Architecture:** For detailed technical implementation, system design, and architecture documentation, see [ARCHITECTURE.md](./ARCHITECTURE.md)
+
+***
+
 # DocPact: A Decentralized, Agent-Driven Trust Layer for Secure Digital Exchange
 
 ***
